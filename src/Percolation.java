@@ -68,7 +68,6 @@ public class Percolation {
 	}             // does the system percolate?
 	*/
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		StdOut.print("What is the value for n: ");
 		int n = StdIn.readInt();
 		StdOut.print("What are the value of rows and column: ");
