@@ -83,7 +83,6 @@ public class Percolation {
 	}             // does the system percolate?
 	*/
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		StdOut.print("What is the value for n: ");
 		int N = StdIn.readInt();
 		 UF uf = new UF(N);
