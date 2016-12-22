@@ -72,6 +72,7 @@ public class Percolation {
 		int n = StdIn.readInt();
 		StdOut.print("What are the value of rows and column: ");
 		rowsandcolumns_array = StdIn.readAllInts();
+		StdOut.println("Baby its cold  outside");
 		Percolation p = new Percolation(n);
 	}
 
