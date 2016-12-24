@@ -13,35 +13,36 @@ public class Percolation {
 	static int[] rows_array;
 	static int[] columns_array;
 	int n;	
-	WeightedQuickUnionUF wquf;
+	static WeightedQuickUnionUF wquf;
 	final boolean OPEN = true;
 	final boolean CLOSE = false;
+	int top_node;
+	int bottom_node;
 	
 	public Percolation(int n) {
 		this.n = n;
+		top_node = (n * n);
+		bottom_node = (n * n) + 1;
 		n_square = new boolean[n][n];
-		wquf = new WeightedQuickUnionUF(n);
+		wquf = new WeightedQuickUnionUF((n * n) + 2);
 		initNSquare();
-		int i = 0, row = 0, col = 0;
-		for (int num: rowsandcolumns_array) {
-			if (i % 2 == 0) {
-				row = num;
-			}
-			
-			else {
-				col = num;
-				StdOut.println("row: " + row + " col: " + col + " xyTo1D: " + xyTo1D(row, col));
-				open(row, col);
-			}
+		int i = 0, row = 1, col = 1;
+		for (int num: rows_array) {
+			StdOut.println("row: " + rows_array[i] + " col: " + columns_array[i]);
+			open(rows_array[i], columns_array[i]);
 			i++;
 		}
 		
 	}  // create n-by-n grid, with all sites blocked
 	
+	
 	private void initNSquare() {
-		for (int i = 0; i < n; i++) {
-			for (int j = 0; j < n; j++) {
-				n_square[i][j] = CLOSE;
+		for (int i = 1; i <= n; i++) {
+			for (int j = 1; j <= n; j++) {
+				n_square[i - 1][j - 1] = CLOSE;
+				if (i == 1) {
+					wquf.union(xyTo1D(i, j), bottom_node);
+				}
 			}
 		}
 	}
@@ -55,17 +56,18 @@ public class Percolation {
 	}
 	
 	private int xyTo1D(int row, int col) {
-		return (((row - 1) * n) + (col - 1));
-		
+		return (((row - 1) * n) + (col - 1));		
 	}
 	
 	public void open(int row, int col) {
-		if ((row > n || col > n)|| (row < 1 || col < 1)) {
+		if (checkValidIndex(row, col) == false) {
 			throw new IndexOutOfBoundsException("row index i out of bounds");
 		}
 		
 		else {
 			n_square[row - 1][col- 1] = OPEN;
+			wquf.union(xyTo1D(row, col), top_node);
+			StdOut.println("Opened " + xyTo1D(row, col));
 		}
 	
 	}       // open site (row, col) if it is not open already 
@@ -86,23 +88,20 @@ public class Percolation {
 		// TODO Auto-generated method stub
 		StdOut.print("What is the value for n: ");
 		int N = StdIn.readInt();
-		 UF uf = new UF(N);
+		 rows_array = new int[1];
+		 columns_array = new  int[1];
 		 int i = 1;
 		 while (!StdIn.isEmpty())
 		 {
 			 rows_array = Arrays.copyOf(rows_array, i);
-			 columns_array = Arrays.copyOf(rows_array, i);
+			 columns_array = Arrays.copyOf(columns_array, i);
 			 int p = StdIn.readInt();
 			 int q = StdIn.readInt();
-			 rows_array[i-1] = p;
-			 columns_array[i-1] = q;
-			 if (!uf.connected(p, q))
-			 {
-				 uf.union(p, q);
-				 StdOut.println(p + " " + q);
-			 }
+			 rows_array[i - 1] = p;
+			 columns_array[i - 1] = q;
+			 i++;
 		 }
-		Percolation p = new Percolation(n);
+		 Percolation perc = new Percolation(N);
 	}
 
 }
