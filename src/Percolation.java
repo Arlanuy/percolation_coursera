@@ -68,6 +68,25 @@ public class Percolation {
 			n_square[row - 1][col- 1] = OPEN;
 			wquf.union(xyTo1D(row, col), top_node);
 			StdOut.println("Opened " + xyTo1D(row, col));
+			if (((row - 1) >= 0) &&
+			(wquf.connected(row, row - 1) == false)) {
+				wquf.union(xyTo1D(row, col), xyTo1D(row - 1, col));
+			}
+			
+			if (((row + 1) < n) &&
+				(wquf.connected(row, row + 1) == false)) {
+					wquf.union(xyTo1D(row,col), xyTo1D(row + 1, col));
+			}
+			
+			if (((col - 1) >= 0) &&
+				(wquf.connected(col, col - 1) == false)) {
+					wquf.union(xyTo1D(row, col), xyTo1D(row, col - 1));
+				}
+				
+			if (((col + 1) < n) &&
+				(wquf.connected(col, col + 1) == false)) {
+					wquf.union(xyTo1D(row, col), xyTo1D(row, col + 1));
+			}
 		}
 	
 	}       // open site (row, col) if it is not open already 
