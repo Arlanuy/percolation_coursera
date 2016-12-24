@@ -13,29 +13,17 @@ public class Percolation {
 	static int[] rows_array;
 	static int[] columns_array;
 	int n;	
-	WeightedQuickUnionUF wquf;
+	static WeightedQuickUnionUF wquf_row;
+	static WeightedQuickUnionUF wquf_col;
 	final boolean OPEN = true;
 	final boolean CLOSE = false;
 	
 	public Percolation(int n) {
 		this.n = n;
 		n_square = new boolean[n][n];
-		wquf = new WeightedQuickUnionUF(n);
+		wquf_row = new WeightedQuickUnionUF(n);
+		wquf_col = new WeightedQuickUnionUF(n);
 		initNSquare();
-		int i = 0, row = 0, col = 0;
-		for (int num: rowsandcolumns_array) {
-			if (i % 2 == 0) {
-				row = num;
-			}
-			
-			else {
-				col = num;
-				StdOut.println("row: " + row + " col: " + col + " xyTo1D: " + xyTo1D(row, col));
-				open(row, col);
-			}
-			i++;
-		}
-		
 	}  // create n-by-n grid, with all sites blocked
 	
 	private void initNSquare() {
@@ -59,13 +47,35 @@ public class Percolation {
 		
 	}
 	
-	public void open(int row, int col) {
-		if ((row > n || col > n)|| (row < 1 || col < 1)) {
+	public void open(int r, int c)
+	{
+		int row = r - 1;
+		int col = c - 1;
+		if ((row > n - 1 || col > n - 1)|| (row < 0 || col < 0)) {
 			throw new IndexOutOfBoundsException("row index i out of bounds");
 		}
 		
 		else {
-			n_square[row - 1][col- 1] = OPEN;
+			n_square[row][col] = OPEN;
+			if ((row >= 1) &&
+			(wquf_row.connected(row, row - 1) == true)) {
+				wquf_row.union(row, row - 1);
+			}
+			
+			if (row < (n - 1) &&
+				(wquf_row.connected(row, row + 1) == true)) {
+					wquf_row.union(row, row + 1);
+			}
+			
+			if (((col) >= 1) &&
+				(wquf_col.connected(col, col - 1) == true)) {
+					wquf_col.union(col, col - 1);
+				}
+				
+			if (col < (n - 1) &&
+				(wquf_col.connected(col, col + 1) == true)) {
+					wquf_col.union(col, col + 1);
+			}
 		}
 	
 	}       // open site (row, col) if it is not open already 
@@ -82,26 +92,50 @@ public class Percolation {
 		
 	}             // does the system percolate?
 	*/
+	private boolean isAdjacent(int ind1, int ind2) {
+		if ((ind1 == (ind2 - 1)) || (ind1 == (ind2 + 1))) {
+			return true;
+		}
+		
+		else {
+			return false;
+		}
+	}
+	
 	public static void main(String[] args) {
 		StdOut.print("What is the value for n: ");
 		int N = StdIn.readInt();
-		 UF uf = new UF(N);
+		 Percolation perc = new Percolation(N);
 		 int i = 1;
+		 rows_array = new int[N];
+		 columns_array = new int[N];
 		 while (!StdIn.isEmpty())
 		 {
 			 rows_array = Arrays.copyOf(rows_array, i);
-			 columns_array = Arrays.copyOf(rows_array, i);
+			 columns_array = Arrays.copyOf(columns_array, i);
 			 int p = StdIn.readInt();
 			 int q = StdIn.readInt();
-			 rows_array[i-1] = p;
-			 columns_array[i-1] = q;
-			 if (!uf.connected(p, q))
+			 StdOut.println("p: " + p + " q: " + q);
+			 rows_array[i-1] = p - 1;
+			 columns_array[i-1] = q - 1;
+			 perc.open(p, q);
+			 if ((i != 1) && (!wquf_row.connected(rows_array[i-2], rows_array[i-1])) 
+					 && perc.isAdjacent(rows_array[i-2], rows_array[i-1]))
 			 {
-				 uf.union(p, q);
-				 StdOut.println(p + " " + q);
+				 wquf_row.union(rows_array[i-2], rows_array[i-1]);
+				 StdOut.println("Baby its hot outside");
+				 StdOut.println(rows_array[i-2] + " " + rows_array[i-1]);
 			 }
+			 
+			 if ((i != 1) && (!wquf_col.connected(columns_array[i-2], columns_array[i-1]))
+					 && perc.isAdjacent(columns_array[i-2], columns_array[i-1]))
+			 {
+				 wquf_col.union(columns_array[i-2], columns_array[i-1]);
+				 StdOut.println("Baby its cold outside");
+				 StdOut.println(columns_array[i-2] + " " + columns_array[i-1]);
+			 }
+			 i++;
 		 }
-		Percolation p = new Percolation(n);
 	}
 
 }
