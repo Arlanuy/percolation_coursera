@@ -10,8 +10,9 @@ import edu.princeton.cs.algs4.StdOut;
 
 public class Percolation {
 	boolean[][] n_square;
-	static int[] rows_array;
-	static int[] columns_array;
+	static int[] rows_array = new int[1];
+	static int[] columns_array = new int[1];
+	static int[] rowsandcolumns_array = new int[2];
 	int n;	
 	WeightedQuickUnionUF wquf;
 	final boolean OPEN = true;
@@ -66,6 +67,25 @@ public class Percolation {
 		
 		else {
 			n_square[row - 1][col- 1] = OPEN;
+			if (((row - 1) >= 1) &&
+			(wquf_row.connected(row, row - 1) == true)) {
+				wquf_row.union(row, row - 1);
+			}
+			
+			if (((row + 1) <= n) &&
+				(wquf_row.connected(row, row + 1) == true)) {
+					wquf_row.union(row, row + 1);
+			}
+			
+			if (((col - 1) >= 1) &&
+				(wquf_col.connected(col, col - 1) == true)) {
+					wquf_col.union(col, col - 1);
+				}
+				
+			if (((col + 1) <= n) &&
+				(wquf_col.connected(col, col + 1) == true)) {
+					wquf_col.union(col, col + 1);
+			}
 		}
 	
 	}       // open site (row, col) if it is not open already 
@@ -85,24 +105,29 @@ public class Percolation {
 	public static void main(String[] args) {
 		StdOut.print("What is the value for n: ");
 		int N = StdIn.readInt();
-		 UF uf = new UF(N);
-		 int i = 1;
+		 WeightedQuickUnionUF uf = new WeightedQuickUnionUF(N);
+		 int i = 1, j = 0;
 		 while (!StdIn.isEmpty())
 		 {
 			 rows_array = Arrays.copyOf(rows_array, i);
 			 columns_array = Arrays.copyOf(rows_array, i);
+			 rowsandcolumns_array = Arrays.copyOf(rowsandcolumns_array, j + 2);
 			 int p = StdIn.readInt();
 			 int q = StdIn.readInt();
 			 rows_array[i-1] = p;
 			 columns_array[i-1] = q;
-			 if (!uf.connected(p, q))
+			 rowsandcolumns_array[j] = p;
+			 rowsandcolumns_array[j + 1] = q;
+			 if (!uf.connected(p - 1, q - 1))
 			 {
-				 uf.union(p, q);
-				 StdOut.println(p + " " + q);
+				 uf.union(p - 1, q - 1);
+				 StdOut.println("Baby its cold outside");
+				 StdOut.println((p - 1) + " " + (q - 1));
 			 }
+			 i++;
+			 j+= 2;
 		 }
-		Percolation p = new Percolation(n);
+		Percolation p = new Percolation(N);
 	}
-
 }
 
