@@ -79,19 +79,25 @@ public class Percolation {
 		}
 	
 	}       // open site (row, col) if it is not open already 
-	/**    
+  
 	public boolean isOpen(int row, int col){
-		
+		return n_square[row][col];
 	}  // is site (row, col) open?
  
 	public boolean isFull(int row, int col) {
+		if (n_square[row][col] == OPEN) {
+			return false;
+		}
 		
+		else {
+			return true;
+		}
 	} // is site (row, col) full?
 	   
 	public boolean percolates() {
 		
 	}             // does the system percolate?
-	*/
+	
 	private boolean isAdjacent(int ind1, int ind2) {
 		if ((ind1 == (ind2 - 1)) || (ind1 == (ind2 + 1))) {
 			return true;
